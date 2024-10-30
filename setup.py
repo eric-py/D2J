@@ -2,12 +2,16 @@ from setuptools import setup, find_packages
 
 setup(
     name="D2J",
-    version="0.1.0",
+    version="0.2.0",
     author="Eric",
     description="A module for converting dates between Gregorian and Jalali calendars.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/eric-py/D2J",
+    url="https://github.com/eric-py/D2J",  # Main project URL
+    project_urls={
+        "GitHub": "https://github.com/eric-py/D2J",
+        "Bug Tracker": "https://github.com/eric-py/D2J/issues",
+    },
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3.6",
