@@ -1,34 +1,37 @@
 # D2J
 
-`D2J(Date to Jalali)` is a Python module for converting dates between the Gregorian and Jalali (Persian) calendars. This module also offers features for displaying Jalali dates as strings, showing day, month, and year separately, converting numbers to Persian, and determining the weekday.
+`D2J (Date to Jalali)` is a Python module designed for converting dates between the Gregorian and Jalali (Persian) calendars. It offers a range of methods for displaying Jalali dates as strings, retrieving day, month, and year components individually, converting numbers to Persian, and determining the day of the week.
 
 ## Features
-- Supports various input formats, including date strings in multiple formats, `datetime.date` and `datetime.datetime` objects, tuples and lists, and Unix timestamps.
-- Converts Gregorian dates to the Jalali calendar.
-- Displays dates as strings or tuples.
-- Shows the day, month, and year, as well as the month name, in Persian.
-- Adds and subtracts days from a date.
-- Calculates the day of the week and checks for leap years.
+
+- **Supports various input types**: Including date strings in multiple formats, `datetime.date` and `datetime.datetime` objects, tuples, lists, and Unix timestamps.
+- **Convert Gregorian to Jalali**: Direct conversion of Gregorian dates to Jalali dates.
+- **Display as String or Tuple**: Option to display dates as custom strings or to retrieve day, month, and year separately.
+- **Add or Subtract Days**: Easily add or subtract a specific number of days from a date.
+- **Calculate Day of the Week and Leap Year**: Determine the day of the week and check if the Jalali year is a leap year.
+- **New Features**: Includes `__str__`, `__repr__`, `now`, and `get_date` methods for enhanced display and retrieval of original input dates.
 
 ## Installation
 
-To install, run the following command in the terminal:
+To install this library, run the following command in your terminal:
 
 ```bash
 pip install D2J
 ```
 
-## Usage
+## Using the D2J Class
 
 ### Creating a D2J Object
 
-To create a `D2J` object, you can pass various types of input as a date. Below are examples of supported input types:
+To create a `D2J` object, you can pass various types of date inputs. These inputs include date strings in different formats, `datetime.date` object, Unix timestamp, and tuples or lists containing the year, month, and day.
+
+Examples of creating a `D2J` object with different inputs:
 
 ```python
 from d2j import D2J
 import datetime
 
-# Using different string formats
+# Using various string formats
 date1 = D2J("2024-10-27")
 date2 = D2J("27-10-2024")
 date3 = D2J("10/27/2024")
@@ -47,20 +50,49 @@ date7 = D2J([2024, 10, 27])
 date8 = D2J(1730057449)
 ```
 
-### Methods in D2J
+### Methods in the D2J Class
 
-#### 1. `as_tuple(persian_numbers=False)`
+#### 1. `now()`
+This class method returns a `D2J` object with the system’s current date.
 
-This method returns the Jalali date as a tuple `(year, month, day)`. If `persian_numbers=True`, the numbers are displayed in Persian.
+```python
+current_date = D2J.now()
+```
+
+#### 2. `__str__()` and `__repr__()`
+These methods provide a string representation of the `D2J` object and return the Jalali date by default.
+
+```python
+print(date1)  # Outputs the date as a string
+repr(date1)   # Shows the string representation with `repr`
+```
+
+#### 3. `get_date(sep="-", persian_numbers=False)`
+Returns the original input date (Gregorian or Jalali) in its initial format. The `sep` parameter specifies the separator, and `persian_numbers` can be set to True to display numbers in Persian.
+
+```python
+input_date = date1.get_date()
+input_date_persian = date1.get_date(persian_numbers=True)
+```
+
+#### 4. `to_gregorian(sep="-", persian_numbers=False)`
+Converts the Jalali date to Gregorian and returns it as a string. If the input date was already Gregorian, it returns the original date unchanged.
+
+```python
+gregorian_date = date1.to_gregorian()
+gregorian_date_persian = date1.to_gregorian(persian_numbers=True)
+```
+
+#### 5. `as_tuple(persian_numbers=False)`
+Returns the Jalali date as a tuple `(year, month, day)`. If `persian_numbers=True`, the numbers are displayed in Persian.
 
 ```python
 jalali_tuple = date1.as_tuple()
 jalali_tuple_persian = date1.as_tuple(persian_numbers=True)
 ```
 
-#### 2. `as_string(sep="-", persian_numbers=False)`
-
-This method returns the Jalali date as a string. `sep` specifies the separator between the year, month, and day (default is `"-"`). If `persian_numbers=True`, the numbers are displayed in Persian.
+#### 6. `as_string(sep="-", persian_numbers=False)`
+Returns the Jalali date as a string. The `sep` parameter specifies the separator to use (default is `"-"`). If `persian_numbers=True`, the numbers are displayed in Persian.
 
 ```python
 jalali_string = date1.as_string()
@@ -68,108 +100,96 @@ jalali_string_custom_sep = date1.as_string(sep="/")
 jalali_string_persian = date1.as_string(persian_numbers=True)
 ```
 
-#### 3. `as_verbose(persian_numbers=False)`
-
-This method returns a descriptive string of the Jalali date, including the day, month name in Persian, and year. If `persian_numbers=True`, the numbers are displayed in Persian.
+#### 7. `as_verbose(persian_numbers=False)`
+Returns the Jalali date as a verbose string, including the day, Persian month name, and year. If `persian_numbers=True`, numbers are displayed in Persian.
 
 ```python
 jalali_verbose = date1.as_verbose()
 jalali_verbose_persian = date1.as_verbose(persian_numbers=True)
 ```
 
-#### 4. `to_gregorian(persian_numbers=False)`
-
-This method returns the original Gregorian input date, useful for retrieving the initial input date. If `persian_numbers=True`, the numbers are displayed in Persian.
-
-```python
-gregorian_date = date1.to_gregorian()
-gregorian_date_persian = date1.to_gregorian(persian_numbers=True)
-```
-
-#### 5. `get_day_of_week()`
-
-This method returns the day of the week (e.g., "Monday", "Tuesday", etc.) for the input Gregorian date.
+#### 8. `get_day_of_week()`
+Returns the name of the weekday for the Gregorian input date in Persian (e.g., "Monday" as "دوشنبه").
 
 ```python
 day_of_week = date1.get_day_of_week()
 ```
 
-#### 6. `is_leap_year()`
-
-This method checks if the Jalali year is a leap year.
+#### 9. `is_leap_year()`
+Checks if the Jalali year is a leap year.
 
 ```python
 is_leap = date1.is_leap_year()
 ```
 
-#### 7. `add_days(days)`
-
-This method returns a new date by adding a specified number of days to the current date.
+#### 10. `add_days(days)`
+Adds the specified number of days to the current date and returns a new `D2J` object with the updated date.
 
 ```python
 new_date = date1.add_days(10)
 ```
 
-#### 8. `subtract_days(days)`
-
-This method returns a new date by subtracting a specified number of days from the current date.
+#### 11. `subtract_days(days)`
+Subtracts the specified number of days from the current date and returns a new `D2J` object with the updated date.
 
 ```python
 new_date = date1.subtract_days(10)
 ```
 
-#### 9. `get_day(persian_numbers=False)`
-
-Returns the day of the Jalali date. If `persian_numbers=True`, the day is displayed in Persian.
+#### 12. `get_day(persian_numbers=False)`
+Returns the day component of the Jalali date. If `persian_numbers=True`, the day is displayed in Persian.
 
 ```python
 day = date1.get_day()
 day_persian = date1.get_day(persian_numbers=True)
 ```
 
-#### 10. `get_month(persian_numbers=False)`
-
-Returns the month of the Jalali date. If `persian_numbers=True`, the month is displayed in Persian.
+#### 13. `get_month(persian_numbers=False)`
+Returns the month component of the Jalali date. If `persian_numbers=True`, the month is displayed in Persian.
 
 ```python
 month = date1.get_month()
 month_persian = date1.get_month(persian_numbers=True)
 ```
 
-#### 11. `get_year(persian_numbers=False)`
-
-Returns the year of the Jalali date. If `persian_numbers=True`, the year is displayed in Persian.
+#### 14. `get_year(persian_numbers=False)`
+Returns the year component of the Jalali date. If `persian_numbers=True`, the year is displayed in Persian.
 
 ```python
 year = date1.get_year()
 year_persian = date1.get_year(persian_numbers=True)
 ```
 
-### Examples
+### Practical Examples
 
-Below are some examples of using the methods in the `D2J` module:
+Here are a few examples to illustrate how to use various methods in the `D2J` module:
 
 ```python
-# Convert date to Jalali string with "/" separator
-print(date1.as_string(sep="/"))
+# Creating an object with the current system date
+current_date = D2J.now()
 
-# Display the Jalali date in verbose form
-print(date1.as_verbose())
+# Displaying the Jalali date as a string with "/" as the separator
+print(current_date.as_string(sep="/"))
 
-# Convert the Jalali date back to Gregorian
-print(date1.to_gregorian())
+# Displaying the Jalali date in verbose form
+print(current_date.as_verbose())
 
-# Add 15 days to the date
-print(date1.add_days(15).as_string())
-print(date1.add_days(15).as_string(persian_numbers=True, sep='/'))
+# Converting the Jalali date to Gregorian
+print(current_date.to_gregorian())
 
-# Get the day of the week
-print(date1.get_day_of_week())
+# Adding 15 days to the date
+print(current_date.add_days(15).as_string())
+print(current_date.add_days(15).as_string(persian_numbers=True, sep='/'))
 
-# Check if the year is a leap year
-print(date1.is_leap_year())
+# Retrieving the weekday
+print(current_date.get_day_of_week())
+
+# Checking if the Jalali year is a leap year
+print(current_date.is_leap_year())
 ```
+
+---
 
 ## License
 
-This project is licensed under the MIT License. For more details, refer to the `LICENSE` file.
+This project is licensed under the MIT License. For more details, please refer to the `LICENSE` file.
