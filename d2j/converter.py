@@ -31,11 +31,14 @@ class D2J:
     DATE_FORMATS = ('%Y-%m-%d', '%d-%m-%Y', '%m/%d/%Y', '%Y/%m/%d', '%d.%m.%Y', '%Y.%m.%d')
 
     def __init__(self, date_input):
+        self.input_date = date_input
         self.gregorian_date = self._parse_input(date_input)
         self.jalali_date = self._convert_to_jalali(self.gregorian_date)
     
     def _parse_input(self, date_input):
-        if isinstance(date_input, datetime.date):
+        if isinstance(date_input, D2J):
+            return date_input.gregorian_date
+        elif isinstance(date_input, datetime.date):
             return date_input
         elif isinstance(date_input, datetime.datetime):
             return date_input.date()
@@ -109,45 +112,50 @@ class D2J:
         result = f"{jd} {month.persian_name} {jy}"
         return self._to_persian_numbers(result) if persian_numbers else result
 
-    def to_gregorian(self, persian_numbers=False):
-        jy, jm, jd = self.jalali_date
-        if jm < 1 or jm > 12 or jd < 1 or jd > 31:
-            raise ValueError("Invalid Jalali date.")
-    
-        jy += 1595
-        days = -355668 + (365 * jy) + ((jy // 33) * 8) + (((jy % 33) + 3) // 4) + jd
-        if jm < 7:
-            days += (jm - 1) * 31
+    def to_gregorian(self, sep="-", persian_numbers=False):
+        if self.gregorian_date == self._parse_input(self.input_date):
+            # تاریخ ورودی میلادی بوده است
+            gy, gm, gd = self.gregorian_date.year, self.gregorian_date.month, self.gregorian_date.day
         else:
-            days += ((jm - 7) * 30) + 186
-    
-        gy = 400 * (days // 146097)
-        days %= 146097
-        if days > 36524:
-            days -= 1
-            gy += 100 * (days // 36524)
-            days %= 36524
-            if days >= 365:
-                days += 1
-    
-        gy += 4 * (days // 1461)
-        days %= 1461
-        if days > 365:
-            gy += (days - 1) // 365
-            days = (days - 1) % 365
-    
-        gd = days + 1
-        if (gy % 4 == 0 and gy % 100 != 0) or (gy % 400 == 0):
-            gm_days = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366]
-        else:
-            gm_days = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
-    
-        gm = next(i for i, v in enumerate(gm_days) if v >= gd)
-        gd = gd - gm_days[gm - 1]
-    
-        result = f"{gy}-{gm:02d}-{gd:02d}"
+            # تاریخ ورودی شمسی بوده است، نیاز به تبدیل داریم
+            jy, jm, jd = self.jalali_date
+            if jm < 1 or jm > 12 or jd < 1 or jd > 31:
+                raise ValueError("Invalid Jalali date.")
+            
+            jy += 1595
+            days = -355668 + (365 * jy) + ((jy // 33) * 8) + (((jy % 33) + 3) // 4) + jd
+            if jm < 7:
+                days += (jm - 1) * 31
+            else:
+                days += ((jm - 7) * 30) + 186
+            
+            gy = 400 * (days // 146097)
+            days %= 146097
+            if days > 36524:
+                days -= 1
+                gy += 100 * (days // 36524)
+                days %= 36524
+                if days >= 365:
+                    days += 1
+            
+            gy += 4 * (days // 1461)
+            days %= 1461
+            if days > 365:
+                gy += (days - 1) // 365
+                days = (days - 1) % 365
+            
+            gd = days + 1
+            if (gy % 4 == 0 and gy % 100 != 0) or (gy % 400 == 0):
+                gm_days = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366]
+            else:
+                gm_days = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
+            
+            gm = next(i for i, v in enumerate(gm_days) if v >= gd)
+            gd = gd - gm_days[gm - 1]
+        
+        result = f"{gy}{sep}{gm:02d}{sep}{gd:02d}"
         return self._to_persian_numbers(result) if persian_numbers else result
-
+    
     def get_day_of_week(self):
         days = ["دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه", "یکشنبه"]
         return days[self.gregorian_date.weekday()]
@@ -176,3 +184,18 @@ class D2J:
     def _get_date_component(self, index, persian_numbers=False):
         component = self.jalali_date[index]
         return self._to_persian_numbers(str(component)) if persian_numbers else component
+
+    def get_date(self, sep="-", persian_numbers=False):
+        result = self.gregorian_date.strftime(f"%Y{sep}%m{sep}%d")
+        return self._to_persian_numbers(result) if persian_numbers else result
+
+    @classmethod
+    def now(cls):
+        today = datetime.date.today()
+        return cls(today)
+
+    def __str__(self):
+        return self.as_string()
+
+    def __repr__(self):
+        return self.as_string()
